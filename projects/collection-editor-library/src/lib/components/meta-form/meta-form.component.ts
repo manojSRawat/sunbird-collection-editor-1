@@ -262,8 +262,31 @@ export class MetaFormComponent implements OnInit, OnChanges, OnDestroy {
     this.toolbarEmitter.emit({ button: 'onFormStatusChange', event });
   }
 
+  typecast(values, config) {
+    const obj = {...values};
+    const targets = Object.keys(config);
+    Object.keys(values).map((key)=> {
+        if (targets.includes(key)) {
+            switch (config[key]) {
+                case 'select':
+                    if (typeof obj[key] === 'object') {
+                        obj[key] = obj[key].length? obj[key][0] : '';
+                    }
+                    break;
+                case 'number':
+                    if (typeof obj[key] === 'string') {
+                        obj[key] = parseInt(obj[key])
+                    }
+                default:
+                    break;
+            }
+        }
+    });
+    return obj;
+  }
+
   valueChanges(event: any) {
-    console.log(event);
+    event = this.typecast(event, {visibility: 'select'});
     if (!_.isEmpty(this.appIcon) && this.showAppIcon) {
       event.appIcon = this.appIcon;
     }

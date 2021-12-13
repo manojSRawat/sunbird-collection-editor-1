@@ -809,8 +809,31 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
   onStatusChanges(event) {
   }
 
+  typecast(values, config) {
+    const obj = {...values};
+    const targets = Object.keys(config);
+    Object.keys(values).map((key)=> {
+        if (targets.includes(key)) {
+            switch (config[key]) {
+                case 'select':
+                    if (typeof obj[key] === 'object') {
+                        obj[key] = obj[key].length? obj[key][0] : '';
+                    }
+                    break;
+                case 'number':
+                    if (typeof obj[key] === 'string') {
+                        obj[key] = parseInt(obj[key]);
+                    }
+                default:
+                    break;
+            }
+        }
+    });
+    return obj;
+  }
+
   valueChanges(event) {
-    this.childFormData = event;
+    this.childFormData = this.typecast(event, {bloomsLevel: 'select', maxScore: 'number'});
   }
   validateFormFields() {
     _.forEach(this.leafFormConfig, (formFieldCategory) => {
