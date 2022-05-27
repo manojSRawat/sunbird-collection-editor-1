@@ -180,7 +180,7 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editorService.fetchCollectionHierarchy(this.questionSetId).subscribe((response) => {
       this.questionSetHierarchy = _.get(response, 'result.questionSet');
       const parentId = this.editorService.parentIdentifier ? this.editorService.parentIdentifier : this.questionId;
-      //only for observation,survey,observation with rubrics 
+      //only for observation,survey,observation with rubrics
       if (!_.isUndefined(parentId) && !_.isUndefined(this.editorService.editorConfig.config.renderTaxonomy)) {
         this.getParentQuestionOptions(parentId);
         const sectionData = this.treeService.getNodeById(parentId);
@@ -1181,6 +1181,11 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
         const questionSetDefaultValue = _.get(this.questionSetHierarchy, formFieldCategory.code) ? _.get(this.questionSetHierarchy, formFieldCategory.code) : '';
         const defaultEditStatus = _.find(this.initialLeafFormConfig, {code: formFieldCategory.code}).editable === true;
         formFieldCategory.default = defaultEditStatus ? '' : questionSetDefaultValue;
+
+        if (formFieldCategory.code === 'author') {
+          formFieldCategory.default = _.get(this.editorService.editorConfig, 'context.user.fullName');
+        }
+
         this.childFormData[formFieldCategory.code] = formFieldCategory.default;
       }
     });
