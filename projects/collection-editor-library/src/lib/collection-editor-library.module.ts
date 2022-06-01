@@ -52,6 +52,8 @@ import { RelationalMetadataComponent } from './components/relational-metadata/re
 import { ResourceLibraryModule } from '@project-sunbird/sunbird-resource-library';
 import { AppLoaderComponent } from './components/app-loader/app-loader.component';
 import { A11yModule } from '@angular/cdk/a11y';
+import {TermAndConditionComponent} from './components/term-and-condition/term-and-condition.component';
+
 @NgModule({
   declarations: [CollectionEditorLibraryComponent, InterpolatePipe, SanitizeHtmlPipe, ContentplayerPageComponent,
     EditorComponent, QumlplayerPageComponent, HeaderComponent, FancyTreeComponent, MetaFormComponent, LibraryComponent,
@@ -59,8 +61,8 @@ import { A11yModule } from '@angular/cdk/a11y';
     LibraryPlayerComponent, ResourceReorderComponent, SkeletonLoaderComponent, TemplateComponent, DateFormatPipe,
     TelemetryInteractDirective, AssetBrowserComponent, CollectionIconComponent,
     QumlPlayerComponent, DialcodeComponent, BulkUploadComponent, CsvUploadComponent, ManageCollaboratorComponent,
-    PublishChecklistComponent, QuestionOptionSubMenuComponent, SliderComponent, TranslationsComponent,AppLoaderComponent,
-    RelationalMetadataComponent],
+    PublishChecklistComponent, QuestionOptionSubMenuComponent, SliderComponent, TranslationsComponent, AppLoaderComponent,
+    RelationalMetadataComponent, TermAndConditionComponent],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule.forChild([]), SuiModule,
   CommonFormElementsModule, InfiniteScrollModule, HttpClientModule, SunbirdPdfPlayerModule, SunbirdVideoPlayerModule,
   QumlLibraryModule, CarouselModule, SunbirdEpubPlayerModule, ResourceLibraryModule, A11yModule],

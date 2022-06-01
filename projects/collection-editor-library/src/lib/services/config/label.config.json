@@ -227,7 +227,9 @@
        "maxSizeInfo": "The maximum slider value",
        "questionsetAddFromLibraryItemLabel": "question",
        "questionsetAddFromLibraryCollectionLabel": "question set",
-       "marks": "Marks"
+       "marks": "Marks",
+       "editingConsentNote": "I confirm that I am allowing my reviewer to make edits to the content and metadata of the content. I consent my reviewer make changes, if any and publish the contain thereafter.",
+       "acceptBothConsentNote": "Agree to both conditions"
       },
     "err":{
        "somethingWentWrong":"Something went wrong",

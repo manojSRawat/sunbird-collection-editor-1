@@ -1,22 +1,31 @@
-import { Component, EventEmitter, Input, OnInit, Output, AfterViewInit, ViewEncapsulation, OnChanges, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewEncapsulation
+} from '@angular/core';
 import * as _ from 'lodash-es';
-import { UUID } from 'angular2-uuid';
-import { McqForm } from '../../interfaces/McqForm';
-import { ServerResponse } from '../../interfaces/serverResponse';
-import { QuestionService } from '../../services/question/question.service';
-import { PlayerService } from '../../services/player/player.service';
-import { EditorTelemetryService } from '../../services/telemetry/telemetry.service';
-import { EditorService } from '../../services/editor/editor.service';
-import { ToasterService } from '../../services/toaster/toaster.service';
-import { throwError, Subject} from 'rxjs';
-import { Router } from '@angular/router';
-import { ConfigService } from '../../services/config/config.service';
-import { FrameworkService } from '../../services/framework/framework.service';
-import { TreeService } from '../../services/tree/tree.service';
-import { EditorCursor } from '../../collection-editor-cursor.service';
-import { filter, finalize, take, takeUntil } from 'rxjs/operators';
-import { SubMenu } from '../question-option-sub-menu/question-option-sub-menu.component';
-import { ICreationContext } from '../../interfaces/CreationContext';
+import {UUID} from 'angular2-uuid';
+import {McqForm} from '../../interfaces/McqForm';
+import {ServerResponse} from '../../interfaces/serverResponse';
+import {QuestionService} from '../../services/question/question.service';
+import {PlayerService} from '../../services/player/player.service';
+import {EditorTelemetryService} from '../../services/telemetry/telemetry.service';
+import {EditorService} from '../../services/editor/editor.service';
+import {ToasterService} from '../../services/toaster/toaster.service';
+import {Subject, throwError} from 'rxjs';
+import {Router} from '@angular/router';
+import {ConfigService} from '../../services/config/config.service';
+import {FrameworkService} from '../../services/framework/framework.service';
+import {TreeService} from '../../services/tree/tree.service';
+import {EditorCursor} from '../../collection-editor-cursor.service';
+import {filter, finalize, take, takeUntil} from 'rxjs/operators';
+import {SubMenu} from '../question-option-sub-menu/question-option-sub-menu.component';
+import {ICreationContext} from '../../interfaces/CreationContext';
 
 const evidenceMimeType='';
 const evidenceSizeLimit='20480';
@@ -110,6 +119,7 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
   sectionPrimaryCategory: any;
   maxScore = 1;
   public questionFormConfig: any;
+
   constructor(
     private questionService: QuestionService, public editorService: EditorService, public telemetryService: EditorTelemetryService,
     public playerService: PlayerService, private toasterService: ToasterService, private treeService: TreeService,
@@ -136,7 +146,8 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
     this.unitId = this.creationContext?.unitIdentifier;
     this.isReadOnlyMode = this.creationContext?.isReadOnlyMode;
     this.toolbarConfig = this.editorService.getToolbarConfig();
-    this.toolbarConfig.showPreview = false;
+    this.showPreview = this.editorService.editorMode !== 'edit';
+    this.toolbarConfig.showPreview = this.showPreview;
     this.toolbarConfig.add_translation = true;
     if (_.get(this.creationContext, 'objectType') === 'question') { this.toolbarConfig.questionContribution = true; }
     this.solutionUUID = UUID.UUID();
@@ -181,7 +192,7 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editorService.fetchCollectionHierarchy(this.questionSetId).subscribe((response) => {
       this.questionSetHierarchy = _.get(response, 'result.questionSet');
       const parentId = this.editorService.parentIdentifier ? this.editorService.parentIdentifier : this.questionId;
-      //only for observation,survey,observation with rubrics 
+      //only for observation,survey,observation with rubrics
       if (!_.isUndefined(parentId) && !_.isUndefined(this.editorService.editorConfig.config.renderTaxonomy)) {
         this.getParentQuestionOptions(parentId);
         const sectionData = this.treeService.getNodeById(parentId);
@@ -382,7 +393,9 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
   submitHandler() {
     this.validateQuestionData();
     this.validateFormFields();
-    if(this.showFormError === false)  this.showSubmitConfirmPopup = true;
+    if (this.showFormError === false) {
+      this.showSubmitConfirmPopup = true;
+    }
   }
 
   saveContent() {
@@ -391,6 +404,14 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
       this.saveQuestion();
     } else {
       this.toasterService.error(_.get(this.configService, 'labelConfig.messages.error.044'));
+    }
+  }
+
+  onConsentSubmit(event) {
+    this.showSubmitConfirmPopup = false;
+    if (event) {
+      this.questionMetaData.isCollaborationEnabled = event.editingConsent;
+      this.sendForReview();
     }
   }
 
@@ -416,13 +437,10 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       callback = callback.bind(this);
       this.upsertQuestion(callback);
-    }
-    else {
+    } else {
       const publishCallback = this.sendQuestionForPublish.bind(this);
       const callback = this.addResourceToQuestionset.bind(this, publishCallback);
       this.upsertQuestion(callback);
-      //this.saveQuestion()
-      //this.sendQuestionForPublish({})
     }
   }
 
