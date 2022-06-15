@@ -220,6 +220,8 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
               this.questionPrimaryCategory = _.get(this.questionMetaData,'primaryCategory');
               // tslint:disable-next-line:max-line-length
               this.questionInteractionType = _.get(this.questionMetaData,'interactionTypes') ? _.get(this.questionMetaData,'interactionTypes[0]') : 'default';
+              // todo make default value false
+              this.editorService.setIsReviewerEditEnable(_.get(this.questionMetaData, 'isCollaborationEnabled', true));
               this.populateFormData();
               if (this.questionInteractionType === 'default') {
                 if (this.questionMetaData.editorState) {
@@ -369,9 +371,10 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
         this.previewContent();
         break;
       case 'editContent':
-        this.previewFormData(true);
+        this.isReadOnlyMode = false;
         this.showPreview = false;
         this.toolbarConfig.showPreview = false;
+        this.previewFormData(!this.toolbarConfig.showPreview);
         break;
       case 'showReviewcomments':
         this.showReviewModal = !this.showReviewModal;
@@ -934,7 +937,7 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
   prepareQuestionBody () {
     const requestBody = this.questionId ?
     {
-      question: _.omit(this.getQuestionMetadata(), ['mimeType'])
+      question: _.omit(this.getQuestionMetadata(), ['mimeType', 'createdBy', 'creator'])
     } :
     {
       question: {

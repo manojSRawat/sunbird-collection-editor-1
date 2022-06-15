@@ -25,6 +25,7 @@ export class EditorService {
   public questionStream$ = new Subject<any>();
   private _editorConfig: IEditorConfig;
   private _editorMode = 'edit';
+  private _isReviewerEditEnable = false;
   public showLibraryPage: EventEmitter<number> = new EventEmitter();
   public showQuestionLibraryPage: EventEmitter<number> = new EventEmitter();
   private _bulkUploadStatus$ = new BehaviorSubject<any>(undefined);
@@ -73,6 +74,14 @@ export class EditorService {
 
   get editorMode() {
     return this._editorMode;
+  }
+
+  get isReviewerEditEnable() {
+    return this._isReviewerEditEnable;
+  }
+
+  setIsReviewerEditEnable(value: boolean) {
+    return this._isReviewerEditEnable = value;
   }
 
   get contentPolicyUrl() {
