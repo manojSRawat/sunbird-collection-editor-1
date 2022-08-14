@@ -658,10 +658,14 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
   saveQuestion() {
     if(_.get(this.creationContext, 'objectType') === 'question') {
       if(this.creationMode === 'edit') {
-        let callback = this.addResourceToQuestionset.bind(this);
+        const callback = this.addResourceToQuestionset.bind(this);
         this.upsertQuestion(callback);
+      } else if (this.creationMode === 'sourcingReview') {
+        const callback = this.sendQuestionForPublish.bind(this);
+        this.upsertQuestion(callback);
+      } else {
+        this.upsertQuestion(undefined);
       }
-      else this.upsertQuestion(undefined);
     }
     else {
       if (_.isUndefined(this.questionId)) {
